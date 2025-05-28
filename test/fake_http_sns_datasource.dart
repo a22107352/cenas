@@ -32,7 +32,7 @@ class FakeHttpSnsDataSource extends HttpSnsDataSource {
 
   final int? delay;
 
-  FakeHttpSnsDataSource({this.delay});
+  FakeHttpSnsDataSource(super._client, {this.delay});
 
   @override
   Future<void> insertHospital(Hospital hospital) async {}

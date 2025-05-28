@@ -1,3 +1,0 @@
-class SnsRepository extends SnsDataSource {
-
-}
