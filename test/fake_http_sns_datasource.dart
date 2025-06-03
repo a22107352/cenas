@@ -15,7 +15,7 @@ class FakeHttpSnsDataSource extends HttpSnsDataSource {
       phoneNumber: 123,
       email: 'hospital1@sns.pt',
       district: 'Lisboa',
-
+      hasEmergency: true,
     ),
     Hospital(
       id: 2,
@@ -26,7 +26,7 @@ class FakeHttpSnsDataSource extends HttpSnsDataSource {
       phoneNumber: 456,
       email: 'hospital2@sns.pt',
       district: 'Porto',
-
+      hasEmergency: false,
     ),
   ];
 
