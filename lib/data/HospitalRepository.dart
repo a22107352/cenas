@@ -27,8 +27,15 @@ class HospitalRepository implements SnsDataSource {
   Future<void> insertHospital(Hospital hospital) async {
     await local.insertHospital(hospital);
   }
-  Future<void> insertReport(EvaluationReport report) async {
+  Future<void> insertReport(Hospital hospital, EvaluationReport report) async {
+    // Assegura que a avaliação está ligada ao hospital
+    report.hospital = hospital.name;
+
+    // Salva no banco
     await local.insertReport(report);
+
+    // (Opcional) Atualiza a lista de avaliações desse hospital, se usar cache
+    await attachEvaluation(hospital.id, report);
   }
   Future<List<EvaluationReport>> getAvaliacoes(String hospitalName) async {
     return await local.getAvaliacoes(hospitalName);
@@ -36,32 +43,38 @@ class HospitalRepository implements SnsDataSource {
 
   @override
   Future<List<Hospital>> getAllHospitals() async {
-    if (await _isOnline()) {
-      final hospitals = await remote.getAllHospitals();
-      await local.saveHospitalsToDB(hospitals);
-      print("Reading hospitals from local DB");
-      print("DB result length: ${hospitals.length}");
-      return hospitals;
-    } else {
-
-      var bd = await local.getAllHospitals();
-      print("Reading hospitals from local DB");
-      print("DB result length: ${bd.length}");
-      return bd;
+    try {
+      if (await _isOnline()) {
+        final hospitals = await remote.getAllHospitals();
+        await local.saveHospitalsToDB(hospitals);
+        print("Reading hospitals from remote and saving locally.");
+        return hospitals;
+      }
+    } catch (e) {
+      print("Erro remoto: $e");
     }
 
+    print("Reading hospitals from local DB");
+    return await local.getAllHospitals();
   }
+
 
   @override
   Future<List<Hospital>> getHospitalsByName(String name) async {
-    if (await _isOnline()) {
-      final hospitals = await remote.getHospitalsByName(name);
-      await local.saveHospitalsToDB(hospitals);
-      return hospitals;
-    } else {
-      return await local.getHospitalsByName(name);
+    try {
+      if (await _isOnline()) {
+        final hospitals = await remote.getHospitalsByName(name);
+        await local.saveHospitalsToDB(hospitals);
+        return hospitals;
+      }
+    } catch (e) {
+      print("Erro ao buscar hospitais remotamente: $e");
     }
+
+    // Fallback para local mesmo se houve erro
+    return await local.getHospitalsByName(name);
   }
+
 
   @override
   Future<Hospital> getHospitalDetailById(int hospitalId) async {

@@ -100,7 +100,7 @@ void runWidgetTests() {
             phoneNumber: 456,
             email: 'hospital2@sns.pt',
             district: 'Porto',
-            hasEmergency: false,
+            hasEmergency: false, reports: [],
           ),
         );
 

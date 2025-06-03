@@ -6,12 +6,9 @@ import '../models/evaluation_report.dart';
 import '../models/hospital.dart';
 
 class HttpSnsDataSource extends SnsDataSource {
-  late final HttpClient _client;
+  final HttpClient _client = HttpClient();
   List<Hospital> _hospitais =[];
   List<EvaluationReport> _avaliacoes=[];
-
-
-  HttpSnsDataSource(this._client);
 
   @override
   Future<List<Hospital>> getAllHospitals() async {

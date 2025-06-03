@@ -1,10 +1,10 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:prjectcm/data/HospitalRepository.dart';
 import 'package:provider/provider.dart';
 import 'package:testable_form_field/testable_form_field.dart';
+import '../connectivity_module.dart';
 import '../data/http_sns_datasource.dart';
 import '../data/sqflite_sns_datasource.dart';
 import '../models/evaluation_report.dart';
@@ -19,12 +19,28 @@ class Avaliacoes extends StatefulWidget {
 
 class _AvaliacoesState extends State<Avaliacoes> {
 
-  late Future<List<Hospital>> _futureHospitais;
+  var _futureHospitais;
 
   @override
   void initState() {
     super.initState();
-    _futureHospitais = context.read<HospitalRepository>().getAllHospitals();
+    _loadHospitais();
+  }
+
+  Future<void> _loadHospitais() async {
+    final local = context.read<SqfliteSnsDataSource>();
+    final remote = context.read<HttpSnsDataSource>();
+    final connectivity = context.read<ConnectivityModule>();
+
+    final hospitalRepository = HospitalRepository(
+      local: local,
+      remote: remote,
+      connectivityModule: connectivity,
+    );
+
+    setState(() {
+      _futureHospitais = hospitalRepository.getAllHospitals();
+    });
   }
   Hospital? _selectedHospital = null;
   int? score;
@@ -316,7 +332,16 @@ class _AvaliacoesState extends State<Avaliacoes> {
     }
 
     if (errors.isEmpty) {
-      final snsRepo =  context.read<HospitalRepository>();
+      final local = context.read<SqfliteSnsDataSource>();
+      final remote = context.read<HttpSnsDataSource>();
+      final connectivity = context.read<ConnectivityModule>();
+
+      final hospitalRepository = HospitalRepository(
+        local: local,
+        remote: remote,
+        connectivityModule: connectivity,
+      );
+      final snsRepo =  hospitalRepository;
 
       try {
         await snsRepo.insertHospital(_selectedHospital!);
@@ -327,7 +352,7 @@ class _AvaliacoesState extends State<Avaliacoes> {
         await snsRepo.attachEvaluation(_selectedHospital!.id, EvaluationReportV!);
 
         // Também salva localmente no banco de dados
-        await snsRepo.insertReport(EvaluationReportV!);
+        await snsRepo.insertReport(_selectedHospital!,EvaluationReportV!);
 
         scaffoldMessenger.showSnackBar(
           SnackBar(

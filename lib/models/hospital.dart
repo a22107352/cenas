@@ -12,7 +12,7 @@ class Hospital{
   bool hasEmergency;
   List<EvaluationReport> reports = [];
   Hospital({required this.id, required this.name, required this.latitude,required this.longitude,required this.address,
-    required this.phoneNumber,required this.email,required this.district,required this.hasEmergency ,required this.reports});
+    required this.phoneNumber,required this.email,required this.district,this.hasEmergency= false , this.reports = const [],});
 
   factory Hospital.fromMap(Map<String,dynamic> map){
     

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:prjectcm/connectivity_module.dart';
-import 'package:prjectcm/http/http_client.dart';
-import 'package:prjectcm/models/hospital.dart';
-
 import 'ConnectivityModuleMeu.dart';
 import 'data/HospitalRepository.dart';
 import 'data/http_sns_datasource.dart';
@@ -16,23 +13,23 @@ void main() async {
   final sqfliteSnsDataSource = SqfliteSnsDataSource();
   await sqfliteSnsDataSource.init();
 
-  final httpSnsDataSource = HttpSnsDataSource(HttpClient());
+  final httpSnsDataSource = HttpSnsDataSource();
 
-  final hospitalRepository = HospitalRepository(
-    local: sqfliteSnsDataSource,
-    remote: httpSnsDataSource,
-    connectivityModule: ConnectivityModuleMeu(),
-  );
 
 
 
   runApp(
-    Provider<HospitalRepository>.value(
-      value: hospitalRepository,
-      child: const MyApp(),
-    ),
+      MultiProvider(
+        providers: [
+          Provider<HttpSnsDataSource>.value(value: httpSnsDataSource),
+          Provider<SqfliteSnsDataSource>.value(value: sqfliteSnsDataSource),
+          Provider<ConnectivityModule>.value(value: ConnectivityModuleMeu()),
+        ],
+        child: MyApp(),
+      )
   );
 }
+
 
 
 class MyApp extends StatefulWidget {
