@@ -1,3 +1,5 @@
+import 'package:prjectcm/models/waiting_time.dart';
+
 import 'evaluation_report.dart';
 
 class Hospital{
@@ -10,9 +12,13 @@ class Hospital{
   String? email;
   String district;
   bool hasEmergency;
+  WaitingTime? waitingTime;
   List<EvaluationReport> reports = [];
-  Hospital({required this.id, required this.name, required this.latitude,required this.longitude,required this.address,
-    required this.phoneNumber,required this.email,required this.district,this.hasEmergency= false , this.reports = const [],});
+  Hospital({required this.id, required this.name,
+    required this.latitude,required this.longitude,required this.address,
+    required this.phoneNumber,required this.email,
+    required this.district,this.hasEmergency= false ,
+    this.reports = const [],this.waitingTime});
 
   factory Hospital.fromMap(Map<String,dynamic> map){
     
