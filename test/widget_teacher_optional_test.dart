@@ -31,7 +31,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
@@ -62,10 +62,10 @@ void runWidgetTests() {
           child: const MyApp(),
         ));
 
-// have to wait for async initializations
+        // have to wait for async initializations
         await tester.pumpAndSettle(Duration(milliseconds: 200));
 
-// go to hospitals list
+        // go to hospitals list
         var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
         expect(listBottomBarItemFinder, findsOneWidget,
             reason: "Deveria existir um NavigationDestination com a key 'lista-bottom-bar-item'");
@@ -78,7 +78,7 @@ void runWidgetTests() {
         final tiles = List.from(tester.widgetList<ListTile>(listTilesFinder));
         expect(tiles.length, 2);
 
-// go to dashboard
+        // go to dashboard
         var dashboardBottomBarItemFinder = find.byKey(Key('dashboard-bottom-bar-item'));
         expect(dashboardBottomBarItemFinder, findsOneWidget,
             reason: "Deveria existir um NavigationDestination com a key 'dashboard-bottom-bar-item'");
@@ -86,10 +86,10 @@ void runWidgetTests() {
         await tester.pumpAndSettle();
 
 
-// go offline
+        // go offline
         fakeConnectivityModule.online = false;
 
-// inject another hospital in the online version
+        // inject another hospital in the online version
         fakeHttpSnsDataSource.hospitals.add(
           Hospital(
             id: 3,
@@ -104,7 +104,7 @@ void runWidgetTests() {
           ),
         );
 
-// go to hospitals list again
+        // go to hospitals list again
         await tester.tap(listBottomBarItemFinder);
         await tester.pumpAndSettle();
 
@@ -114,14 +114,14 @@ void runWidgetTests() {
         final tiles2 = List.from(tester.widgetList<ListTile>(listTilesFinder2));
         expect(tiles2.length, 2, reason: "Devia ter mostrado 2 hospitais vindos da BD pois está offline");
 
-// go to dashboard
+        // go to dashboard
         await tester.tap(dashboardBottomBarItemFinder);
         await tester.pumpAndSettle();
 
-// go online
+        // go online
         fakeConnectivityModule.online = true;
 
-// go to hospitals list again
+        // go to hospitals list again
         await tester.tap(listBottomBarItemFinder);
         await tester.pumpAndSettle();
 
@@ -143,7 +143,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
@@ -160,10 +160,10 @@ void runWidgetTests() {
     await tester.tap(listTilesFinder.first);
     await tester.pumpAndSettle();
 
-// // just for demo purposes
-// await Future.delayed(Duration(seconds: 10));
+    // // just for demo purposes
+    // await Future.delayed(Duration(seconds: 10));
 
-// find if the text 'hospital1' is present
+    // find if the text 'hospital1' is present
     final Finder hospital1Finder = find.text('hospital 1');
     expect(hospital1Finder, findsAtLeastNWidgets(1), reason: "Deveria existir pelo menos um Text com o texto 'hospital 1' (primeiro elemento da lista)");
     expect(find.textContaining('559'), findsAtLeastNWidgets(1), reason: "Deveria existir pelo menos um Text contendo o texto '559' (representando a distância em metros entre"

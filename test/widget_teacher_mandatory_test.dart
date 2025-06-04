@@ -10,7 +10,6 @@ import 'package:prjectcm/models/hospital.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:testable_form_field/testable_form_field.dart';
-
 import 'fake_connectivity_module.dart';
 import 'fake_http_sns_datasource.dart';
 import 'fake_location_module.dart';
@@ -33,7 +32,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     expect(find.byType(NavigationBar), findsOneWidget,
@@ -58,7 +57,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
@@ -77,12 +76,12 @@ void runWidgetTests() {
     final tiles = List.from(tester.widgetList<ListTile>(listTilesFinder));
     expect(tiles.length, 2, reason: "Deveriam existir 2 ListTiles dentro do ListView dos hospitais");
 
-// Ensure the first ListTile contains a Text widget with "Hospital 1"
+    // Ensure the first ListTile contains a Text widget with "Hospital 1"
     final Finder firstTileTextFinder = find.descendant(of: listTilesFinder.first, matching: find.text("hospital 1"));
     expect(firstTileTextFinder, findsOneWidget,
         reason: "O primeiro ListTile deveria conter um Text com o texto 'hospital 1'");
 
-// Ensure the second ListTile contains a Text widget with "Hospital 2"
+    // Ensure the second ListTile contains a Text widget with "Hospital 2"
     final Finder secondTileTextFinder = find.descendant(of: listTilesFinder.last, matching: find.text("hospital 2"));
     expect(secondTileTextFinder, findsOneWidget,
         reason: "O segundo ListTile deveria conter um Text com o texto 'hospital 2'");
@@ -90,7 +89,7 @@ void runWidgetTests() {
   });
 
 
-// check if it shows a circularprogressindicator while it doesn't receive an answer from the server
+  // check if it shows a circularprogressindicator while it doesn't receive an answer from the server
   testWidgets('Show hospitals list with delay', (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
       providers: [
@@ -102,7 +101,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
@@ -115,7 +114,7 @@ void runWidgetTests() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget,
         reason: "Enquanto carrega a lista de hospitais, devia mostrar um CircularProgressIndicator");
 
-// wait for the response
+    // wait for the response
     await tester.pumpAndSettle(Duration(seconds: 1));
 
     final Finder listViewFinder = find.byKey(Key('list-view'));
@@ -137,7 +136,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var mapBottomBarItemFinder = find.byKey(Key('mapa-bottom-bar-item'));
@@ -146,29 +145,33 @@ void runWidgetTests() {
     await tester.tap(mapBottomBarItemFinder);
     await tester.pumpAndSettle();
 
-// Find the GoogleMap widget
+    // Find the GoogleMap widget
     final Finder mapFinder = find.byType(GoogleMap);
     expect(mapFinder, findsOneWidget,
         reason: "Depois de saltar para o ecrã com o mapa, deveria existir um widget do tipo GoogleMap");
 
-// Extract the GoogleMap widget
+    // Extract the GoogleMap widget
     final GoogleMap googleMap = tester.widget<GoogleMap>(mapFinder);
-// Ensure the map contains exactly two markers
+    // Ensure the map contains exactly two markers
     expect(googleMap.markers.length, 2, reason: "O mapa deve conter exatamente 2 marcadores");
   });
 
   testWidgets('Show hospitals list and detail', (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
+
       providers: [
         Provider<HttpSnsDataSource>.value(value: FakeHttpSnsDataSource()),
         Provider<SqfliteSnsDataSource>.value(value: FakeSqfliteSnsDataSource()),
         Provider<LocationModule>.value(value: FakeLocationModule()),
         Provider<ConnectivityModule>.value(value: FakeConnectivityModule()),
       ],
-      child: const MyApp(),
-    ));
 
-// have to wait for async initializations
+      child: const MyApp(),
+
+    )
+    );
+
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
@@ -185,14 +188,14 @@ void runWidgetTests() {
     await tester.tap(listTilesFinder.first);
     await tester.pumpAndSettle();
 
-// // just for demo purposes
-// await Future.delayed(Duration(seconds: 10));
+    // // just for demo purposes
+    // await Future.delayed(Duration(seconds: 10));
 
-// find if the text 'hospital1' is present
+    // find if the text 'hospital1' is present
     final Finder hospital1Finder = find.text('hospital 1');
     expect(hospital1Finder, findsAtLeastNWidgets(1), reason: "Deveria existir pelo menos um Text com o texto 'hospital 1' (primeiro elemento da lista)");
 
-// go back
+    // go back
     await tester.pageBack();
     await tester.pumpAndSettle();
 
@@ -200,7 +203,7 @@ void runWidgetTests() {
     await tester.tap(listTilesFinder2.at(1));
     await tester.pumpAndSettle();
 
-// find if the text 'hospital2' is present
+    // find if the text 'hospital2' is present
     final Finder hospital2Finder = find.text('hospital 2');
     expect(hospital2Finder, findsAtLeastNWidgets(1), reason: "Deveria existir pelo menos um Text com o texto 'hospital 2' (segundo elemento da lista)");
   });
@@ -216,7 +219,7 @@ void runWidgetTests() {
       child: const MyApp(),
     ));
 
-// have to wait for async initializations
+    // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));
 
     var avaliacoesBottomBarItemFinder = find.byKey(Key('avaliacoes-bottom-bar-item'));
@@ -253,10 +256,10 @@ void runWidgetTests() {
         reason: "O widget com a key 'evaluation-comment-field' deveria ser um TestableFormField<String>");
     TestableFormField<String> commentFormField = tester.widget(commentViewFinder);
 
-// using "an hour ago" instead of current time since probably the form field will have its default value set to now
+    // using "an hour ago" instead of current time since probably the form field will have its default value set to now
     final aHourAgo = DateTime.now().subtract(Duration(hours: 1));
     hospitalSelectionFormField.setValue(FakeHttpSnsDataSource().hospitals[0]);
-// ratingFormField.setValue(4);  // don't set the value for now
+    // ratingFormField.setValue(4);  // don't set the value for now
     dateTimeFormField.setValue(aHourAgo);
     commentFormField.setValue("No comments");
 
@@ -266,10 +269,10 @@ void runWidgetTests() {
     await tester.tap(submitButtonViewFinder);
     await tester.pumpAndSettle();
 
-// it should show a text near the field explaining the error
+    // it should show a text near the field explaining the error
     expect(find.textContaining('Preencha a avaliação'), findsOneWidget);
 
-// it should show a snackbar telling a field is missing
+    // it should show a snackbar telling a field is missing
     expect(find.byType(SnackBar), findsOneWidget);
 
     ratingFormField.setValue(5);  // set the missing value now
@@ -281,7 +284,7 @@ void runWidgetTests() {
     await tester.tap(submitButtonViewFinder2);
     await tester.pumpAndSettle();
 
-// go to list
+    // go to list
     var listBottomBarItemFinder = find.byKey(Key('lista-bottom-bar-item'));
     expect(listBottomBarItemFinder, findsOneWidget);
     await tester.tap(listBottomBarItemFinder);
@@ -296,16 +299,16 @@ void runWidgetTests() {
     await tester.tap(listTilesFinder.first);
     await tester.pumpAndSettle();
 
-// find if the text 'hospital1' is present
+    // find if the text 'hospital1' is present
     expect(find.text('hospital 1'), findsAtLeastNWidgets(1),
         reason: "Deveria existir pelo menos um Text com o texto 'hospital 1' (primeiro elemento da lista)");
 
-// find if the text with the current date is present
+    // find if the text with the current date is present
     final nowStr = DateFormat("dd/MM/yyyy HH:mm").format(aHourAgo);
     expect(find.text(nowStr), findsAtLeastNWidgets(1),
         reason: "Deveria existir pelo menos um Text com o texto '$nowStr' (data de uma das avaliações)");
 
-// find if the text 'No comments' is present
+    // find if the text 'No comments' is present
     expect(find.text('No comments'), findsAtLeastNWidgets(1),
         reason: "Deveria existir pelo menos um Text com o texto 'No comments' (texto de uma das avaliações)");
 
