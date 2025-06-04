@@ -30,7 +30,7 @@ class HttpSnsDataSource extends SnsDataSource {
 
     return _hospitais;
   }
-
+  @override
   Future<Hospital> getHospitalDetailById(int hospitalId) async{
     List<Hospital> hospitais = await getAllHospitals();
 
@@ -41,23 +41,8 @@ class HttpSnsDataSource extends SnsDataSource {
     }
     throw Exception('Hospital with ID $hospitalId not found');
   }
-  Future<List<EvaluationReport>> getAvaliacoes(String hospitalNome)async {
-    return await _avaliacoes.where((a) => a.hospital == hospitalNome).toList();
-  }
-  void insertAvaliacoes(EvaluationReport EvaluationReport) {
-    _avaliacoes.add(EvaluationReport);
-  }
-  Future<List<EvaluationReport>> getEvaluationReport(String hospital)async{
-    List<EvaluationReport> EvaluationReportV = await getAvaliacoes(hospital);
 
-    for (var i = 0; i < EvaluationReportV.length; i++) {
-      if(EvaluationReportV[i].hospital== hospital){
-        return EvaluationReportV;
-      }
-    }
-    throw Exception('Hospital with ID $EvaluationReportV not found');
 
-  }
 
   @override
   Future<void> attachEvaluation(int hospitalId, EvaluationReport report) async {

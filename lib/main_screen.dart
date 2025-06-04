@@ -21,7 +21,7 @@ class MainpageState extends State<Mainpage> {
       bottomNavigationBar: NavigationBar(
         selectedIndex:_selectedIndex ,
         onDestinationSelected: (index)=> setState(() => _selectedIndex= index),
-        destinations: pages.map((page) => NavigationDestination(icon: Icon(page.icon,key: page.key,), label: page.title)).toList(),
+        destinations: pages.map((page) => NavigationDestination(key: page.key,icon: Icon(page.icon), label: page.title)).toList(),
       ),
     );
   }

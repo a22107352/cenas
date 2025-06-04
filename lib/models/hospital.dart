@@ -43,7 +43,7 @@ class Hospital{
       reports: [],
     );
   }
-
+  List<EvaluationReport> get getReports => reports;
 
 
 

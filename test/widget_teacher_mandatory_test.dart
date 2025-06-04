@@ -10,7 +10,6 @@ import 'package:prjectcm/models/hospital.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:testable_form_field/testable_form_field.dart';
-
 import 'fake_connectivity_module.dart';
 import 'fake_http_sns_datasource.dart';
 import 'fake_location_module.dart';
@@ -159,14 +158,18 @@ void runWidgetTests() {
 
   testWidgets('Show hospitals list and detail', (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
+
       providers: [
         Provider<HttpSnsDataSource>.value(value: FakeHttpSnsDataSource()),
         Provider<SqfliteSnsDataSource>.value(value: FakeSqfliteSnsDataSource()),
         Provider<LocationModule>.value(value: FakeLocationModule()),
         Provider<ConnectivityModule>.value(value: FakeConnectivityModule()),
       ],
+
       child: const MyApp(),
-    ));
+
+    )
+    );
 
     // have to wait for async initializations
     await tester.pumpAndSettle(Duration(milliseconds: 200));

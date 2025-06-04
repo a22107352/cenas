@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prjectcm/data/HospitalRepository.dart';
 import 'package:provider/provider.dart';
-import '../ConnectivityModuleMeu.dart';
 import '../connectivity_module.dart';
 import '../data/http_sns_datasource.dart';
 import '../data/sqflite_sns_datasource.dart';
@@ -22,11 +21,6 @@ class _ListaState extends State<Lista> {
   Future<List<Hospital>>?
   _futureHospitais;
 
-  var hospitalRepository = HospitalRepository(
-    local:  SqfliteSnsDataSource(),
-    remote: HttpSnsDataSource(),
-    connectivityModule: ConnectivityModuleMeu(),
-  );
   @override
   void initState() {
     super.initState();
@@ -62,6 +56,7 @@ class _ListaState extends State<Lista> {
       body: _futureHospitais == null
           ? Center(child: CircularProgressIndicator())
           : FutureBuilder<List<Hospital>>(
+        
         future: _futureHospitais,
         builder: (context, snapshot) {
           print("Snapshot data: ${snapshot.data}");
@@ -97,7 +92,7 @@ class _ListaState extends State<Lista> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => HospitalDetailPage(
-                            hospitalNome: hospitais[index].name,
+                            hospitalid: hospitais[index].id,
                           ),
                         ),
                       ),
@@ -111,7 +106,6 @@ class _ListaState extends State<Lista> {
           );
         },
       ),
-
     );
   }
 }

@@ -27,26 +27,15 @@ class HospitalRepository implements SnsDataSource {
   Future<void> insertHospital(Hospital hospital) async {
     await local.insertHospital(hospital);
   }
-  Future<void> insertReport(Hospital hospital, EvaluationReport report) async {
-    // Assegura que a avaliação está ligada ao hospital
-    report.hospital = hospital.name;
-
-    // Salva no banco
-    await local.insertReport(report);
-
-    // (Opcional) Atualiza a lista de avaliações desse hospital, se usar cache
-    await attachEvaluation(hospital.id, report);
-  }
-  Future<List<EvaluationReport>> getAvaliacoes(String hospitalName) async {
-    return await local.getAvaliacoes(hospitalName);
-  }
 
   @override
   Future<List<Hospital>> getAllHospitals() async {
     try {
       if (await _isOnline()) {
         final hospitals = await remote.getAllHospitals();
-        await local.saveHospitalsToDB(hospitals);
+        for(var hospital in hospitals){
+          await local.insertHospital(hospital);
+        }
         print("Reading hospitals from remote and saving locally.");
         return hospitals;
       }
@@ -64,7 +53,10 @@ class HospitalRepository implements SnsDataSource {
     try {
       if (await _isOnline()) {
         final hospitals = await remote.getHospitalsByName(name);
-        await local.saveHospitalsToDB(hospitals);
+        for(var hospital in hospitals){
+          await local.insertHospital(hospital);
+        }
+        await local.insertHospital(hospitals as Hospital);
         return hospitals;
       }
     } catch (e) {
@@ -97,7 +89,7 @@ class HospitalRepository implements SnsDataSource {
     // TODO: implement getHospitalWaitingTimes
     throw UnimplementedError();
   }
-  
+
   //Future<List<WaitingTime>> getHospitalWaitingTimes(int hospitalId) async {
     //if (await _isOnline()) {
       //final times = await remote.getHospitalWaitingTimes(hospitalId);

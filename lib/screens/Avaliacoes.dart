@@ -345,14 +345,14 @@ class _AvaliacoesState extends State<Avaliacoes> {
 
       try {
         await snsRepo.insertHospital(_selectedHospital!);
-        // Garante que o hospital está corretamente atribuído
+
         EvaluationReportV!.hospital = _selectedHospital!.name;
 
-        // Adiciona no repositório remoto em memória
+
         await snsRepo.attachEvaluation(_selectedHospital!.id, EvaluationReportV!);
 
-        // Também salva localmente no banco de dados
-        await snsRepo.insertReport(_selectedHospital!,EvaluationReportV!);
+
+        await snsRepo.getHospitalsByName(_selectedHospital!.name);
 
         scaffoldMessenger.showSnackBar(
           SnackBar(

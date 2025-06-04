@@ -12,38 +12,35 @@ import '../models/evaluation_report.dart';
 
 
 class HospitalDetailPage extends StatefulWidget {
-  final String hospitalNome;
+  final int hospitalid;
 
-  const HospitalDetailPage ({super.key, required this.hospitalNome});
+  const HospitalDetailPage ({super.key, required this.hospitalid});
 
   @override
   State<HospitalDetailPage> createState() => _HospitalDetailPageState();
 }
 
 class _HospitalDetailPageState extends State<HospitalDetailPage> {
-  late Future<List<Hospital>> _futureHospitais;
-  var hospitalRepository = HospitalRepository(
-    local:  SqfliteSnsDataSource(),
-    remote: HttpSnsDataSource(),
-    connectivityModule: ConnectivityModuleMeu(),
-  );
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  late HospitalRepository _futureHospitais;
 
-    final local = Provider.of<SqfliteSnsDataSource>(context, listen: false);
-    final remote = Provider.of<HttpSnsDataSource>(context, listen: false);
-    final connectivity = Provider.of<ConnectivityModule>(context, listen: false);
+  void initState() {
+    super.initState();
+    _loadHospitais();
+  }
+  Future<void> _loadHospitais() async {
+    final local = context.read<SqfliteSnsDataSource>();
+    final remote = context.read<HttpSnsDataSource>();
+    final connectivity = context.read<ConnectivityModule>();
 
-    hospitalRepository = HospitalRepository(
+    final hospitalRepository = HospitalRepository(
       local: local,
       remote: remote,
       connectivityModule: connectivity,
     );
 
-    _futureHospitais = hospitalRepository.getHospitalsByName(widget.hospitalNome);
-
-
+    setState(() {
+      _futureHospitais = hospitalRepository;
+    });
   }
 
   Hospital? _hospital;
@@ -58,21 +55,21 @@ class _HospitalDetailPageState extends State<HospitalDetailPage> {
       ),
       body: Align(
         alignment: Alignment.topCenter,
-        child: FutureBuilder<List<Hospital>>(
-          future: _futureHospitais,
+        child: FutureBuilder<Hospital>(
+          future: _futureHospitais.getHospitalDetailById(widget.hospitalid),
           builder: (context, hospitalSnapshot) {
             if (hospitalSnapshot.connectionState != ConnectionState.done) {
               return Center(child: CircularProgressIndicator());
             } else if (hospitalSnapshot.hasError) {
               return Center(child: Text('Erro ao carregar hospital: ${hospitalSnapshot.error}'));
-            } else if (!hospitalSnapshot.hasData || hospitalSnapshot.data!.isEmpty) {
+            } else if (!hospitalSnapshot.hasData) {
               return Center(child: Text("Hospital não encontrado."));
             }
 
-            _hospital = hospitalSnapshot.data!.first;
+            _hospital = hospitalSnapshot.data!;
 
             return FutureBuilder<List<EvaluationReport>>(
-              future: hospitalRepository.getAvaliacoes(widget.hospitalNome),
+              future: Future.value(_hospital!.getReports),
               builder: (context, evalSnapshot) {
                 if (evalSnapshot.connectionState != ConnectionState.done) {
                   return Center(child: CircularProgressIndicator());
@@ -180,3 +177,5 @@ class _HospitalDetailPageState extends State<HospitalDetailPage> {
           );
   }
 }
+
+
