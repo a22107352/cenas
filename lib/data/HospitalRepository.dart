@@ -70,11 +70,20 @@ class HospitalRepository implements SnsDataSource {
 
   @override
   Future<Hospital> getHospitalDetailById(int hospitalId) async {
-    if (await _isOnline()) {
-      final hospital = await remote.getHospitalDetailById(hospitalId);
-      await local.insertHospital(hospital);
-      return hospital;
+    final online = await _isOnline();
+
+    if (online) {
+      try {
+        final hospital = await remote.getHospitalDetailById(hospitalId);
+        await local.insertHospital(hospital); // Cache for offline use
+        return hospital;
+      } catch (e) {
+        // If remote fails, try local
+        print("Remote fetch failed, trying local. Error: $e");
+        return await local.getHospitalDetailById(hospitalId);
+      }
     } else {
+      // Offline: use local only
       return await local.getHospitalDetailById(hospitalId);
     }
   }

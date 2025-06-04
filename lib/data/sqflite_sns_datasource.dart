@@ -102,13 +102,13 @@ class SqfliteSnsDataSource extends SnsDataSource {
     if (_database == null) {
       throw Exception("Database not initialized.");
     }
-
+    // Search the hospital table for a hospital with the given ID
     final List<Map<String, dynamic>> maps = await _database!.query(
       'hospital',
       where: 'id = ?',
       whereArgs: [hospitalId],
     );
-
+// If found, convert the first result into a Hospital object
     if (maps.isNotEmpty) {
       return Hospital.fromDB(maps.first);
     } else {
