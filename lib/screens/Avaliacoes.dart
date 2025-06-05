@@ -113,7 +113,11 @@ class _AvaliacoesState extends State<Avaliacoes> {
                               state.didChange(newValue);
                             });
                           },
-                          items: hospitais.map((Hospital hospital) {
+                          items: hospitais
+                              .where((h) => h.name.isNotEmpty)
+                              .toSet()
+                              .toList()
+                              .map((Hospital hospital) {
                             return DropdownMenuItem<Hospital>(
                               value: hospital,
                               child: Padding(
@@ -333,26 +337,9 @@ class _AvaliacoesState extends State<Avaliacoes> {
 
     if (errors.isEmpty) {
       final local = context.read<SqfliteSnsDataSource>();
-      final remote = context.read<HttpSnsDataSource>();
-      final connectivity = context.read<ConnectivityModule>();
-
-      final hospitalRepository = HospitalRepository(
-        local: local,
-        remote: remote,
-        connectivityModule: connectivity,
-      );
-      final snsRepo =  hospitalRepository;
 
       try {
-        await snsRepo.insertHospital(_selectedHospital!);
-
-        EvaluationReportV!.hospital = _selectedHospital!.name;
-
-
-        await snsRepo.attachEvaluation(_selectedHospital!.id, EvaluationReportV!);
-
-
-        await snsRepo.getHospitalsByName(_selectedHospital!.name);
+        await local.attachEvaluation(_selectedHospital!.id, EvaluationReportV!);
 
         scaffoldMessenger.showSnackBar(
           SnackBar(

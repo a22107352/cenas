@@ -20,25 +20,19 @@ class HospitalDetailPage extends StatefulWidget {
 }
 
 class _HospitalDetailPageState extends State<HospitalDetailPage> {
-  late HospitalRepository _futureHospitais;
+  late SqfliteSnsDataSource _futureHospitais;
 
+  @override
   void initState() {
     super.initState();
     _loadHospitais();
   }
   Future<void> _loadHospitais() async {
     final local = context.read<SqfliteSnsDataSource>();
-    final remote = context.read<HttpSnsDataSource>();
-    final connectivity = context.read<ConnectivityModule>();
 
-    final hospitalRepository = HospitalRepository(
-      local: local,
-      remote: remote,
-      connectivityModule: connectivity,
-    );
 
     setState(() {
-      _futureHospitais = hospitalRepository;
+      _futureHospitais = local;
     });
   }
 
@@ -65,10 +59,9 @@ class _HospitalDetailPageState extends State<HospitalDetailPage> {
               return Center(child: Text("Hospital não encontrado."));
             }
 
-            _hospital = hospitalSnapshot.data!;
-
+            final hospital = hospitalSnapshot.data!;
             return FutureBuilder<List<EvaluationReport>>(
-              future: Future.value(_hospital!.getReports),
+              future: hospital.getReports,
               builder: (context, evalSnapshot) {
                 if (evalSnapshot.connectionState != ConnectionState.done) {
                   return Center(child: CircularProgressIndicator());
@@ -79,9 +72,9 @@ class _HospitalDetailPageState extends State<HospitalDetailPage> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      _DetalheHospital(_hospital!),
+                      _DetalheHospital(hospital),
                       SizedBox(height: 10),
-                      DetalheAvalicoes(evalSnapshot.data ?? []),
+                      DetalheAvalicoes(evalSnapshot.data),
                     ],
                   ),
                 );

@@ -49,8 +49,14 @@ class Hospital{
       reports: [],
     );
   }
-  List<EvaluationReport> get getReports => reports;
+  Future<List<EvaluationReport>> get getReports => Future.value(reports);
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Hospital && runtimeType == other.runtimeType && id == other.id;
 
+  @override
+  int get hashCode => id.hashCode;
 
 }
