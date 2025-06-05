@@ -5,8 +5,17 @@ import 'ConnectivityModuleMeu.dart';
 import 'data/http_sns_datasource.dart';
 import 'data/sqflite_sns_datasource.dart';
 import 'main_screen.dart';
-
+import 'dart:io' as io;
+class _HttpOverrides extends io.HttpOverrides {
+  @override
+  io.HttpClient createHttpClient(io.SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (io.X509Certificate cert, String host, int port) => true;
+  }
+}
 void main() {
+  io.HttpOverrides.global = _HttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
   final sqfliteSnsDataSource = SqfliteSnsDataSource();
